@@ -1,0 +1,109 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#080d15">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="description" content="Read-only Bitcoin research with saved historical chart matching, observed trends, and live visualization.">
+  <link rel="manifest" href="./manifest.webmanifest">
+  <link rel="icon" href="./icons/icon-192.png" type="image/png">
+  <link rel="apple-touch-icon" href="./icons/icon-192.png">
+  <link rel="stylesheet" href="./style.css">
+  <title>BTC Market Lab — Live research</title>
+</head>
+<body>
+  <div class="ambient ambient-a"></div><div class="ambient ambient-b"></div>
+  <div class="shell">
+    <header class="topbar">
+      <a class="identity" href="./" aria-label="BTC Market Lab home">
+        <span class="mark">₿</span>
+        <span class="identity-text"><strong>BTC <i>/</i> MARKET LAB</strong><small>LIVE RESEARCH STUDIO <span class="edition">07</span></small></span>
+      </a>
+      <nav class="topnav" aria-label="Section navigation"><a href="#overview">Overview</a><a href="#learning">Learning</a><a href="#external">TradingView</a></nav>
+      <div class="top-actions">
+        <div class="connection" id="connection" role="status"><i class="live-dot"></i><span id="feedLabel">Connecting</span></div>
+        <button id="installBtn" class="primary action" hidden>Install</button>
+        <button id="backupBtn" class="secondary action" aria-label="Open saved data and backup settings">↗ <span>My progress</span></button>
+      </div>
+    </header>
+    <main id="overview">
+      <div class="heading">
+        <div><p class="overline">BITCOIN <span class="slash">/</span> USD · READ-ONLY ANALYTICS</p><h1>Signals, <em>without the noise.</em></h1><p class="tagline">Real 1-second live trade candles, historical trend context, and locally saved 1-second observations. Historical learning continues from completed 1-minute data.</p></div>
+        <div class="utc"><span>LOCAL TIME</span><strong id="localClock">--:--:--</strong><small>Independent UTC 15m windows</small></div>
+      </div>
+      <section class="statsbar" aria-label="Market overview">
+        <div class="stat-main"><span class="overline">BTC / USD <i class="little-star">✦</i> LIVE FEED</span><div class="price-line"><b id="spot">$—</b><span id="liveFlag" class="age">Waiting for data</span></div><p id="marketDelta">Waiting for completed candles…</p></div>
+        <div class="stat-min"><span class="overline">15 MIN CHANGE</span><b id="delta15">—</b><small>Completed minute bars</small></div>
+        <div class="stat-min"><span class="overline">ARCHIVE</span><b id="barsSaved">0</b><small>Saved 1m candles</small></div>
+        <div class="stat-min"><span class="overline">FEED HEALTH</span><b id="dataHealth">Starting</b><small id="dataDetail">Checking exchange</small></div>
+      </section>
+      <div class="primary-grid">
+        <section class="panel mainchart" aria-labelledby="chartTitle">
+          <div class="panel-head"><div><p class="overline">01 · BTC/USD · REAL 1-SECOND CANDLES</p><h2 id="chartTitle">1-second price action <span class="head-note">/ observed trades</span></h2></div>
+            <div class="controls"><div class="segmented" aria-label="Chart timeframe"><button data-span="30">30s</button><button data-span="120" class="selected">2m</button><button data-span="900">15m</button></div><div class="segmented" aria-label="Chart appearance"><button data-type="line">Line</button><button data-type="candles" class="selected">Candles</button></div></div>
+          </div>
+          <div class="chart-wrap"><canvas id="chart" role="img" aria-label="Live BTC chart showing observed one-second OHLC trade candles, with gaps for unobserved seconds"></canvas><div class="chart-tooltip" id="chartTooltip" hidden></div></div>
+          <div class="chart-legend"><span><i class="key-line blue"></i> Observed 1-second OHLC</span><span><i class="key-line green"></i> EMA 9 bars</span><span><i class="key-line purple"></i> EMA 21 bars</span><span><i class="key-line gold"></i> Forming 1s bar</span></div><p class="second-label"><strong id="secondCount">0 observed 1s bars</strong><span id="secondFeed">Connecting to live trades…</span></p>
+          <div class="chart-footer"><p class="micro-note">Each candle covers one second with at least one observed exchange trade. Missing seconds remain blank; wider charts visually group bars. Hover or touch and drag for exact 1s OHLC. Historic learning uses completed 1m candles.</p><label class="toggle-label"><input id="emaToggle" type="checkbox" checked><span>Show 9/21 observed-bar EMAs</span></label></div>
+        </section>
+        <aside class="right-col">
+          <section class="panel structure-card" aria-labelledby="structure-title">
+            <div class="panel-head"><div><p class="overline">02 · OBSERVED PRICE STRUCTURE</p><h2 id="structure-title">Trend snapshot</h2></div><span class="tiny-chip">Closed candles only</span></div>
+            <div id="structureCall" class="structure-call neutral" aria-live="polite">HOLD OFF</div>
+            <p id="structureDetail" class="card-muted">Gathering completed candles…</p>
+            <div class="vote-track"><i id="upVotes"></i><i id="downVotes"></i></div>
+            <div class="vote-notes"><span id="upCount">Higher 0/11</span><span id="downCount">Lower 0/11</span></div>
+            <div class="evidence-topline"><span id="evidenceSummary">Waiting for confirmation</span><span id="dataGateSummary">Checking data quality…</span></div>
+            <details class="evidence-panel"><summary>See all trend and data checks</summary><div id="dataGates" class="data-gates" aria-label="Data quality checks"></div><div id="trendChecks" class="trend-checks" aria-label="Technical indicator checks"></div></details>
+            <div class="study-levels"><div><span>Historical lower boundary</span><b id="supportValue">—</b></div><div><span>Historical upper boundary</span><b id="resistanceValue">—</b></div></div>
+            <p id="structureReasons" class="micro-note">Five historical strength labels based on multiple corroborating checks. Indicators overlap and cannot guarantee future direction.</p>
+          </section>
+          <section class="panel timer-card"><div class="panel-head"><div><p class="overline">03 · UTC WINDOW</p><h2>15-minute clock</h2></div><span class="tiny-chip">UTC</span></div><div class="timer" id="timer">15:00</div><p class="card-muted">Until next quarter-hour boundary</p><div class="timertrack"><i id="timerFill"></i></div><div class="timer-ends"><span id="startWindow">—</span><span id="endWindow">—</span></div><p class="micro-note">General chart reference only, not a contract countdown.</p></section>
+          <section class="panel pattern-card"><div class="panel-head"><div><p class="overline">04 · LEARNED MARKET CONTEXT</p><h2>Historical regime</h2></div><span class="tiny-chip" id="regimeChip">Collecting</span></div><div class="regime-display"><div><span class="sub">Latest completed 15m window</span><strong id="regimeValue">—</strong></div><div class="regime-icon" aria-hidden="true">≋</div></div><div class="regime-details"><div><span>Observed movement</span><b id="recentWindowMove">—</b></div><div><span>Window range</span><b id="recentWindowRange">—</b></div><div><span>Historical direction</span><b id="recentWindowDirection">—</b></div></div><p class="micro-note">Regime labels compare completed windows with saved history. They are not predictions.</p></section>
+        </aside>
+      </div>
+      <div class="section-heading" id="learning"><div><p class="overline">ANALYSIS LAYER</p><h2>Learning archive</h2></div><span class="section-side">STORED ON YOUR DEVICE <span class="green-dot">●</span></span></div>
+      <div class="analysis-grid">
+        <section class="panel learning-card"><div class="panel-head"><div><p class="overline">05 · LEARNING STATUS</p><h2>Growing with every completed window</h2></div><span class="tiny-chip" id="phaseChip">Starting</span></div>
+          <div class="learning-hero"><div class="learning-number"><strong id="learningPercent">0%</strong><span>archive milestone progress</span></div><span class="learn-icon" aria-hidden="true">✧</span></div><div class="learning-track"><i id="learningFill"></i></div>
+          <div class="learning-kpis"><div><span>15m samples</span><b id="windowsSaved">0</b></div><div><span>History span</span><b id="daysSaved">—</b></div><div><span>Typical 1m move</span><b id="typical1m">—</b></div><div><span>Sample coverage</span><b id="historyCoverage">—</b></div></div>
+          <div class="resume-card"><span class="resume-symbol">↻</span><div><b id="resumeHeadline">Saved history</b><small id="resumeDetail">Restores when you reopen the app</small></div></div>
+          <p class="micro-note">The app learns historical volatility ranges and how often observed conditions changed. Extra data can improve sample stability, not guarantee forecasting accuracy.</p>
+        </section>
+        <section class="panel indicator-card"><div class="panel-head"><div><p class="overline">06 · CONFIRMED MINUTE DATA</p><h2>Indicator snapshot</h2></div><span class="tiny-chip">Educational</span></div>
+          <div class="indicators" id="indicators"><div class="empty">Waiting for at least 65 consecutive completed candles…</div></div><p class="micro-note">RSI, EMA, MACD, Bollinger Bands and realized volatility describe observed conditions; these checks are correlated, not independent proof of future movement.</p>
+        </section>
+      </div>
+      <section class="panel chart-study-card" aria-labelledby="chart-study-title">
+        <div class="panel-head"><div><p class="overline">07 · LEARNING FROM PAST CHARTS</p><h2 id="chart-study-title">Historical shape library</h2><p class="card-muted">Matches the latest completed 15-minute BTC candle pattern to earlier chart shapes</p></div><span class="tiny-chip" id="chartStudyPhase">COLLECTING</span></div>
+        <div class="chart-study-layout"><div class="shape-current"><div class="overline">LATEST COMPLETED CHART</div><div class="shape-chart" id="latestShape" aria-live="off"></div><div class="study-family" id="chartStudyFamily">—</div></div>
+          <div class="study-context"><div><span>Archived chart examples</span><strong id="chartStudyCount">0</strong></div><div><span>Earlier vs later pattern mix</span><strong id="chartStudyDrift">—</strong></div><p id="chartStudyDesc" class="micro-note">Collecting completed chart examples…</p></div></div>
+        <div class="shape-match-head">CLOSEST SAVED CHART SHAPES <span>(different historical windows)</span></div>
+        <div class="shape-match-list" id="pastMatches"><p class="empty">Collecting completed charts…</p></div>
+        <p class="micro-note">Uses completed Coinbase/Kraken 1-minute OHLC bars to reconstruct historic 15-minute charts; never scrapes TradingView. The resemblance index is a shape-distance score, <strong>not a confidence level, future direction estimate, or buy/sell instruction</strong>. Distribution shift measures sample stability, not accuracy.</p>
+      </section>
+      <section class="panel audit-card" aria-labelledby="audit-title">
+          <div class="panel-head"><div><p class="overline">09 · ARCHIVED LABEL QUALITY</p><h2 id="audit-title">Historical trend consistency</h2></div><span class="tiny-chip" id="auditCount">No completed audits</span></div>
+          <div class="audit-kpis"><div><span>Same-window direction agreement</span><b id="auditAgreement">—</b></div><div><span>Directional labels</span><b id="auditClassified">0</b></div><div><span>HOLD OFF windows</span><b id="auditHoldOff">0</b></div><div><span>Audit coverage</span><b id="auditCoverage">—</b></div></div>
+          <p class="micro-note">A retrospective audit: STRONG/LIGHT UP and DOWN labels at the close of a 15-minute window are compared with movement <strong>during that same completed window</strong>. This is not prediction accuracy, a trading strategy, or evidence of profitability. Thresholds adapt to saved volatility history and can become more stable with more data.</p>
+        </section>
+      <div class="history-grid">
+        <section class="panel distribution-card"><div class="panel-head"><div><p class="overline">07 · HISTORICAL PATTERNS</p><h2>15-minute archive</h2></div><span class="tiny-chip" id="windowsChip">0 windows</span></div>
+          <div class="distribution"><div class="distribution-legend"><span>Higher <b id="windowUp">0</b></span><span>Lower <b id="windowDown">0</b></span><span>Flat <b id="windowFlat">0</b></span></div><div class="distribution-bar"><i id="barUp"></i><i id="barDown"></i><i id="barFlat"></i></div><div class="distribution-desc"><div><span>Typical absolute 15m movement</span><b id="median15">—</b></div><div><span>Estimated historical noise threshold</span><b id="noiseThreshold">—</b></div><div><span>Historical direction changes</span><b id="historicalFlips">—</b></div><div><span>Missing minutes · latest 65</span><b id="missingMinutes">—</b></div></div></div>
+        </section>
+        <section class="panel journal-card"><div class="panel-head"><div><p class="overline">08 · COMPLETED WINDOW LOG</p><h2>Recent observations</h2></div><span class="tiny-chip">Auto-saved</span></div><div class="journal" id="patternJournal"><p class="empty">The next completed window will appear here.</p></div><p class="micro-note">These observations are reconstructed from saved candles on each launch; no future outcomes are assumed.</p></section>
+      </div>
+      <section class="panel tv-panel" id="external"><div class="panel-head"><div><p class="overline">10 · EXTERNAL VISUAL REFERENCE</p><h2>TradingView BTC chart</h2><p class="card-muted">Optional BTC/USD chart · no scraping or data access from the embedded widget</p></div><button class="secondary action" id="toggleTV" aria-expanded="false">Open chart ↓</button></div><div id="tvArea" hidden><div id="tvWidget"></div><p class="micro-note">TradingView needs internet and may use a different market feed than this dashboard.</p></div></section>
+      <footer><span><strong>BTC MARKET LAB / 07</strong> · Read-only research · No orders, betting access or guaranteed predictions</span><span id="storageStatus" aria-live="polite">Checking local storage…</span></footer>
+      <div class="hidden-legacy" hidden><span id="lastSaved"></span><span id="lastSavedDesc"></span></div>
+    </main>
+  </div>
+  <dialog id="backupDialog"><div class="dialog-head"><h2>Progress & data</h2><button id="closeDialog" class="close" aria-label="Close dialog">×</button></div>
+    <p>Your completed candles, local learning archive and chart preferences are kept in this browser. No account or automatic cloud synchronization is provided.</p>
+    <div class="dialog-row"><button class="primary" id="exportBtn">Export saved progress</button><label class="secondary file-pick">Import backup<input id="importFile" type="file" accept=".json,application/json" hidden></label></div>
+    <button class="secondary" id="persistBtn">Request persistent storage</button><p class="micro-note">Private mode, cleared browser data, or device storage cleanup can erase local history. Export a backup periodically.</p><p id="backupMessage" aria-live="polite"></p>
+  </dialog>
+  <script type="module" src="./app.js"></script>
+</body></html>

@@ -1,0 +1,29 @@
+{
+  "name": "BTC Market Lab 07 \u2014 5-level Trend Checks",
+  "short_name": "BTC Lab 07",
+  "description": "An educational read-only live BTC/USD chart with real 1-second observed-trade candles, and locally saved history.",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "display_override": [
+    "standalone",
+    "minimal-ui"
+  ],
+  "background_color": "#080d15",
+  "theme_color": "#080d15",
+  "orientation": "any",
+  "icons": [
+    {
+      "src": "./icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "./icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
